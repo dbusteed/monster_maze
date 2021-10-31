@@ -1,0 +1,94 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://Scripts/Monster.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/SoftCollision.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/HitBox.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Sprites/monster.png" type="Texture" id=4]
+
+[sub_resource type="Shader" id=7]
+code = "shader_type canvas_item;
+
+uniform bool blink = false;
+
+void fragment() {
+	vec4 color = texture(TEXTURE, UV);
+	if (blink) {
+		color.a = color.a * 0.5;
+	}
+	COLOR = color;
+}
+
+//shader_type canvas_item;
+//
+//uniform float adj : hint_range(0.25, 1.0) = 0;
+//
+//void fragment() {
+//	vec4 color = texture(TEXTURE, UV);
+//	color.a = color.a * adj;
+//	COLOR = color;
+//}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = SubResource( 7 )
+shader_param/blink = false
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 3.17553
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 3.96111
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 3.98001
+
+[sub_resource type="Animation" id=6]
+resource_name = "Blink"
+loop = true
+step = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/blink")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ true, false ]
+}
+
+[node name="Monster" type="KinematicBody2D"]
+script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 2 )
+texture = ExtResource( 4 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 3 )
+
+[node name="SoftCollision" parent="." instance=ExtResource( 2 )]
+visible = false
+collision_layer = 16
+collision_mask = 16
+
+[node name="CollisionShape2D" parent="SoftCollision" index="0"]
+shape = SubResource( 4 )
+
+[node name="HitBox" parent="." instance=ExtResource( 3 )]
+visible = false
+collision_layer = 8
+collision_mask = 4
+
+[node name="CollisionShape2D" parent="HitBox" index="0"]
+shape = SubResource( 5 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Blink = SubResource( 6 )
+
+[editable path="SoftCollision"]
+[editable path="HitBox"]
