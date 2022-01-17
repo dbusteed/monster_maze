@@ -5,7 +5,7 @@
 [ext_resource path="res://Scenes/HitBox.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Sprites/monster.png" type="Texture" id=4]
 
-[sub_resource type="Shader" id=7]
+[sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
 
 uniform bool blink = false;
@@ -31,7 +31,7 @@ void fragment() {
 
 [sub_resource type="ShaderMaterial" id=2]
 resource_local_to_scene = true
-shader = SubResource( 7 )
+shader = SubResource( 1 )
 shader_param/blink = false
 
 [sub_resource type="CircleShape2D" id=3]
