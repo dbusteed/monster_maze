@@ -43,9 +43,9 @@ __meta__ = {
 
 [node name="Label2" type="RichTextLabel" parent="Panel"]
 margin_left = 32.0
-margin_top = 40.0
+margin_top = 33.0
 margin_right = 384.0
-margin_bottom = 184.0
+margin_bottom = 207.0
 rect_scale = Vector2( 0.5, 0.5 )
 custom_fonts/normal_font = SubResource( 2 )
 bbcode_enabled = true

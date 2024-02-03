@@ -31,75 +31,75 @@ var target_time = 20
 
 
 func get_open_position():
-    var cells = tilemap.get_used_cells_by_id(open_tile_id)
-    var cell_pos
-    var filtered: Array = []
-    for cell in cells:
-        cell_pos = tilemap.map_to_world(cell)
-        if player.global_position.distance_to(cell_pos) >= spawn_buffer:
-            filtered.append(cell_pos)
-    filtered.shuffle()
-    return (filtered[0] + (Vector2.ONE * (Global.tile_size / 2)))
+	var cells = tilemap.get_used_cells_by_id(open_tile_id)
+	var cell_pos
+	var filtered: Array = []
+	for cell in cells:
+		cell_pos = tilemap.map_to_world(cell)
+		if player.global_position.distance_to(cell_pos) >= spawn_buffer:
+			filtered.append(cell_pos)
+	filtered.shuffle()
+	return (filtered[0] + (Vector2.ONE * (Global.tile_size / 2)))
 
 
 func spawn_monster():
-    var m = monster.instance()
-    m.position = get_open_position()
+	var m = monster.instance()
+	m.position = get_open_position()
 
-    monsters.add_child(m)
-    monster_count += 1
-    
-    if monster_count > max_monsters:
-        monsters.get_child(1).blink()
-        monsters.get_child(0).queue_free()
-        monster_count -= 1
+	monsters.add_child(m)
+	monster_count += 1
+	
+	if monster_count > max_monsters:
+		monsters.get_child(1).blink()
+		monsters.get_child(0).queue_free()
+		monster_count -= 1
 
 
 func _ready():
-    level_data = Global.get_level_data()
-    if level_data.size() == 0:
-        Global.playing = false
-        add_child(won_menu.instance())
-    else:
-        max_monsters = level_data[0]
-        spawn_time = level_data[1]
-        target_time = level_data[2]
-        
-        level_lbl.text = "level " + str(Global.level) + "/" + str(Global.max_level)
-        player.position = get_open_position()
-        
-        level_start_lbl.text = "level " + str(Global.level)
-        level_start_timer.start(1.5)
+	level_data = Global.get_level_data()
+	if level_data.size() == 0:
+		Global.playing = false
+		add_child(won_menu.instance())
+	else:
+		max_monsters = level_data[0]
+		spawn_time = level_data[1]
+		target_time = level_data[2]
+		
+		level_lbl.text = "level " + str(Global.level) + "/" + str(Global.max_level)
+		player.position = get_open_position()
+		
+		level_start_lbl.text = "level " + str(Global.level)
+		level_start_timer.start(1.5)
 
 
 func _on_LevelStartTimer_timeout():
-    Global.playing = true
-    
-    level_start_timer.stop()
-    level_start_tween.interpolate_property(level_start_ui, "modulate", Color(1, 1, 1, .8), Color(1, 1, 1, 0), 1.0)
-    level_start_tween.start()
+	Global.playing = true
+	
+	level_start_timer.stop()
+	level_start_tween.interpolate_property(level_start_ui, "modulate", Color(1, 1, 1, .8), Color(1, 1, 1, 0), 1.0)
+	level_start_tween.start()
 
-    for _i in range(max_monsters):
-        spawn_monster()
-    monsters.get_child(0).blink()
-        
-    monster_bar_tween.interpolate_property(monster_bar, "value", 0, 100, spawn_time)
-    monster_bar_tween.start()
-    portal_bar_tween.interpolate_property(portal_bar, "value", 0, 100, target_time)
-    portal_bar_tween.start()
+	for _i in range(max_monsters):
+		spawn_monster()
+	monsters.get_child(0).blink()
+		
+	monster_bar_tween.interpolate_property(monster_bar, "value", 0, 100, spawn_time)
+	monster_bar_tween.start()
+	portal_bar_tween.interpolate_property(portal_bar, "value", 0, 100, target_time)
+	portal_bar_tween.start()
 
 
 func _on_PortalBarTween_tween_completed(_object, _key):
-    var _portal = portal.instance()
-    add_child(_portal)
-    _portal.position = get_open_position()
-    _portal.fade_in()
+	var _portal = portal.instance()
+	add_child(_portal)
+	_portal.position = get_open_position()
+	_portal.fade_in()
 
 
 func _on_MonsterBarTween_tween_completed(_object, _key):
-    if Global.playing:
-        spawn_monster()
-        monster_bar_tween.interpolate_property(monster_bar, "value", 0, 100, spawn_time)
-        monster_bar_tween.start()
-    else:
-        monster_bar_tween.stop_all()
+	if Global.playing:
+		spawn_monster()
+		monster_bar_tween.interpolate_property(monster_bar, "value", 0, 100, spawn_time)
+		monster_bar_tween.start()
+	else:
+		monster_bar_tween.stop_all()
